@@ -6,14 +6,11 @@
         public PictureBox BottomPipe { get; }
 
         private const int PipeWidth = 60;
-        private const int GapSize = 160;     // kuşun geçeceği boşluk
+        private const int GapSize = 160;
         private readonly int formHeight;
         private static readonly Random random = new Random();
 
-        // Borunun yatay konumu
         public int X => TopPipe.Left;
-
-        // Ekranın solundan tamamen çıktı mı?
         public bool IsOffScreen => TopPipe.Right < 0;
 
         public Pipe(int x, int formHeight)
@@ -24,7 +21,6 @@
             Reset(x);
         }
 
-        // Boruyu verilen x'e koyar, boşluğu rastgele bir yüksekliğe ayarlar
         public void Reset(int x)
         {
             int gapTop = random.Next(100, formHeight - 100 - GapSize);
@@ -38,6 +34,13 @@
         {
             TopPipe.Left -= speed;
             BottomPipe.Left -= speed;
+        }
+
+        // Kuş bu boruya değiyor mu?
+        public bool CollidesWith(Rectangle area)
+        {
+            return TopPipe.Bounds.IntersectsWith(area) ||
+                   BottomPipe.Bounds.IntersectsWith(area);
         }
     }
 }

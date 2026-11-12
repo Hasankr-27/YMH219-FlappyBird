@@ -8,8 +8,8 @@
         // Kuşun dikey hızı: pozitifse aşağı, negatifse yukarı gider
         public float Velocity { get; private set; }
 
-        private const float Gravity = 0.6f;   // her karede hıza eklenen çekim
-        private const float JumpPower = -9f;  // zıplayınca hızın aldığı değer
+        private const float Gravity = 0.6f;
+        private const float JumpPower = -9f;
 
         public Bird(int x, int y)
         {
@@ -28,8 +28,8 @@
 
         public void Update()
         {
-            Velocity += Gravity;          // düştükçe hızlanır
-            Sprite.Top += (int)Velocity;  // hız kadar yer değiştirir
+            Velocity += Gravity;
+            Sprite.Top += (int)Velocity;
         }
     }
 }
