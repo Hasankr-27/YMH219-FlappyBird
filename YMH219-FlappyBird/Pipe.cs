@@ -5,12 +5,16 @@
         public PictureBox TopPipe { get; }
         public PictureBox BottomPipe { get; }
 
+        // Kuş bu boruyu geçti mi? (skor iki kere sayılmasın diye)
+        public bool Passed { get; set; }
+
         private const int PipeWidth = 60;
         private const int GapSize = 160;
         private readonly int formHeight;
         private static readonly Random random = new Random();
 
         public int X => TopPipe.Left;
+        public int Right => TopPipe.Right;
         public bool IsOffScreen => TopPipe.Right < 0;
 
         public Pipe(int x, int formHeight)
@@ -28,6 +32,7 @@
             TopPipe.SetBounds(x, 0, PipeWidth, gapTop);
             BottomPipe.SetBounds(x, gapTop + GapSize, PipeWidth,
                                  formHeight - gapTop - GapSize);
+            Passed = false;
         }
 
         public void Move(int speed)
@@ -36,7 +41,6 @@
             BottomPipe.Left -= speed;
         }
 
-        // Kuş bu boruya değiyor mu?
         public bool CollidesWith(Rectangle area)
         {
             return TopPipe.Bounds.IntersectsWith(area) ||

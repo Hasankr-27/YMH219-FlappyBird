@@ -2,10 +2,7 @@
 {
     public class Bird
     {
-        // Ekranda görünen kuş (şimdilik sarı kutu)
         public PictureBox Sprite { get; }
-
-        // Kuşun dikey hızı: pozitifse aşağı, negatifse yukarı gider
         public float Velocity { get; private set; }
 
         private const float Gravity = 0.6f;
@@ -16,9 +13,9 @@
             Sprite = new PictureBox
             {
                 Size = new Size(34, 24),
-                Location = new Point(x, y),
                 BackColor = Color.Gold
             };
+            Reset(x, y);
         }
 
         public void Jump()
@@ -30,6 +27,13 @@
         {
             Velocity += Gravity;
             Sprite.Top += (int)Velocity;
+        }
+
+        // Kuşu başlangıç noktasına koyar, hızını sıfırlar
+        public void Reset(int x, int y)
+        {
+            Sprite.Location = new Point(x, y);
+            Velocity = 0;
         }
     }
 }
