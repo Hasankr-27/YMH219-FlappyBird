@@ -15,7 +15,6 @@ namespace YMH219_FlappyBird
         private const int BirdStartX = 80;
         private const int BirdStartY = 250;
 
-        // Zemin hariç oynanabilir yükseklik
         private int PlayHeight => ClientSize.Height - Background.GroundHeight;
 
         public Form1()
@@ -23,7 +22,7 @@ namespace YMH219_FlappyBird
             InitializeComponent();
 
             ClientSize = new Size(400, 600);
-            FormBorderStyle = FormBorderStyle.FixedSingle;   // pencere boyutu sabit
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             DoubleBuffered = true;
             KeyPreview = true;
@@ -47,7 +46,7 @@ namespace YMH219_FlappyBird
                 Visible = false
             };
             btnRestart.FlatAppearance.BorderSize = 0;
-            btnRestart.Location = new Point((ClientSize.Width - btnRestart.Width) / 2, 320);
+            btnRestart.Location = new Point((ClientSize.Width - btnRestart.Width) / 2, 325);
             btnRestart.Click += (s, e) => RestartGame();
             Controls.Add(btnRestart);
 
@@ -94,15 +93,14 @@ namespace YMH219_FlappyBird
                 }
             }
 
-            Invalidate();   // ekranı yeniden çiz -> OnPaint çalışır
+            Invalidate();
         }
 
-        // Her karede tüm sahne burada çiziliyor (sıra önemli: arkadan öne)
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
             var g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;   // kenarlar yumuşak olsun
+            g.SmoothingMode = SmoothingMode.AntiAlias;
 
             background.DrawSky(g);
             foreach (var pipe in pipes)
@@ -110,24 +108,28 @@ namespace YMH219_FlappyBird
             background.DrawGround(g);
             bird.Draw(g);
 
-            DrawOutlinedText(g, state.Score.ToString(), 44, 30);
+            // Ortada büyük skor
+            DrawOutlinedText(g, state.Score.ToString(), 44, 30, StringAlignment.Center);
+
+            // Sağ üstte en yüksek skor
+            DrawOutlinedText(g, "En Yüksek: " + state.HighScore, 16, 10, StringAlignment.Far);
 
             if (!state.IsStarted)
-                DrawOutlinedText(g, "SPACE ile başla", 24, 180);
+                DrawOutlinedText(g, "SPACE ile başla", 24, 180, StringAlignment.Center);
 
             if (state.IsGameOver)
                 DrawGameOverPanel(g);
         }
 
-        // Kenarlıklı beyaz yazı (oyunlardaki gibi)
-        private void DrawOutlinedText(Graphics g, string text, float size, int y)
+        // Kenarlıklı beyaz yazı. align: Center = ortala, Far = sağa yasla
+        private void DrawOutlinedText(Graphics g, string text, float size, int y, StringAlignment align)
         {
             using var path = new GraphicsPath();
             using var family = new FontFamily("Segoe UI");
-            using var format = new StringFormat { Alignment = StringAlignment.Center };
+            using var format = new StringFormat { Alignment = align };
 
-            path.AddString(text, family, (int)FontStyle.Bold, size,
-                           new RectangleF(0, y, ClientSize.Width, size * 2), format);
+            var area = new RectangleF(10, y, ClientSize.Width - 20, size * 2);
+            path.AddString(text, family, (int)FontStyle.Bold, size, area, format);
 
             using var outline = new Pen(Color.FromArgb(60, 40, 20), 6) { LineJoin = LineJoin.Round };
             g.DrawPath(outline, path);
@@ -136,7 +138,7 @@ namespace YMH219_FlappyBird
 
         private void DrawGameOverPanel(Graphics g)
         {
-            var panel = new Rectangle(60, 160, ClientSize.Width - 120, 230);
+            var panel = new Rectangle(60, 160, ClientSize.Width - 120, 235);
 
             using (var shadow = new SolidBrush(Color.FromArgb(80, 0, 0, 0)))
                 g.FillRectangle(shadow, panel.X + 6, panel.Y + 6, panel.Width, panel.Height);
@@ -145,13 +147,22 @@ namespace YMH219_FlappyBird
             using (var border = new Pen(Color.FromArgb(120, 80, 40), 4))
                 g.DrawRectangle(border, panel);
 
-            DrawOutlinedText(g, "GAME OVER", 34, 180);
+            DrawOutlinedText(g, "GAME OVER", 34, 175, StringAlignment.Center);
 
-            using var font = new Font("Segoe UI", 16, FontStyle.Bold);
-            using var brush = new SolidBrush(Color.FromArgb(120, 80, 40));
+            using var font = new Font("Segoe UI", 15, FontStyle.Bold);
+            using var brown = new SolidBrush(Color.FromArgb(120, 80, 40));
+            using var red = new SolidBrush(Color.Firebrick);
             using var format = new StringFormat { Alignment = StringAlignment.Center };
-            g.DrawString("Skor: " + state.Score, font, brush,
-                         new RectangleF(0, 250, ClientSize.Width, 40), format);
+
+            g.DrawString("Skor: " + state.Score, font, brown,
+                         new RectangleF(0, 240, ClientSize.Width, 30), format);
+
+            if (state.IsNewRecord)
+                g.DrawString("YENİ REKOR!", font, red,
+                             new RectangleF(0, 275, ClientSize.Width, 30), format);
+            else
+                g.DrawString("En Yüksek: " + state.HighScore, font, brown,
+                             new RectangleF(0, 275, ClientSize.Width, 30), format);
         }
 
         private void GameOver()
@@ -181,7 +192,7 @@ namespace YMH219_FlappyBird
             if (e.KeyCode == Keys.Space && !state.IsGameOver)
             {
                 if (!state.IsStarted)
-                    state.Start();   // ilk Space oyunu başlatır
+                    state.Start();
                 bird.Jump();
             }
 

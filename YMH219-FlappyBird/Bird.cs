@@ -48,8 +48,8 @@
             float angle = Math.Clamp(Velocity * 4, -25, 70);
 
             var saved = g.Save();
-            g.TranslateTransform(X + Width / 2f, Y + Height / 2f);  // kuşun merkezine git
-            g.RotateTransform(angle);                                // döndür
+            g.TranslateTransform(X + Width / 2f, Y + Height / 2f);
+            g.RotateTransform(angle);
 
             // Gövde
             var body = new RectangleF(-Width / 2f, -Height / 2f, Width, Height);
@@ -57,7 +57,7 @@
             using (var pen = new Pen(Color.FromArgb(120, 80, 0), 2))
                 g.DrawEllipse(pen, body);
 
-            // Kanat: zıpladıktan hemen sonra yukarıda, sonra aşağıda
+            // Kanat
             float wingY = flapTimer > 5 ? -8 : 0;
             var wing = new RectangleF(-12, wingY, 14, 9);
             g.FillEllipse(Brushes.Orange, wing);
@@ -72,7 +72,7 @@
             PointF[] beak = { new PointF(13, -1), new PointF(22, 3), new PointF(13, 7) };
             g.FillPolygon(Brushes.OrangeRed, beak);
 
-            g.Restore(saved);   // döndürmeyi geri al, diğer çizimler etkilenmesin
+            g.Restore(saved);
         }
     }
 }
