@@ -1,50 +1,77 @@
-﻿namespace YMH219_FlappyBird
+﻿using System.Drawing.Drawing2D;
+
+namespace YMH219_FlappyBird
 {
     public class Pipe
     {
-        public PictureBox TopPipe { get; }
-        public PictureBox BottomPipe { get; }
-
-        // Kuş bu boruyu geçti mi? (skor iki kere sayılmasın diye)
-        public bool Passed { get; set; }
-
-        private const int PipeWidth = 60;
+        public const int Width = 60;
         private const int GapSize = 160;
-        private readonly int formHeight;
+        private const int CapHeight = 24;    // borunun ağız kısmı
+        private const int CapOverhang = 4;   // ağız gövdeden ne kadar taşar
+
+        private readonly int areaHeight;     // oynanabilir alan (zemin hariç)
         private static readonly Random random = new Random();
 
-        public int X => TopPipe.Left;
-        public int Right => TopPipe.Right;
-        public bool IsOffScreen => TopPipe.Right < 0;
+        public int X { get; private set; }
+        public int GapTop { get; private set; }
+        public bool Passed { get; set; }
 
-        public Pipe(int x, int formHeight)
+        public int Right => X + Width;
+        public bool IsOffScreen => Right < 0;
+
+        public Rectangle TopRect => new Rectangle(X, 0, Width, GapTop);
+        public Rectangle BottomRect => new Rectangle(X, GapTop + GapSize, Width,
+                                                     areaHeight - GapTop - GapSize);
+
+        public Pipe(int x, int areaHeight)
         {
-            this.formHeight = formHeight;
-            TopPipe = new PictureBox { BackColor = Color.ForestGreen };
-            BottomPipe = new PictureBox { BackColor = Color.ForestGreen };
+            this.areaHeight = areaHeight;
             Reset(x);
         }
 
         public void Reset(int x)
         {
-            int gapTop = random.Next(100, formHeight - 100 - GapSize);
-
-            TopPipe.SetBounds(x, 0, PipeWidth, gapTop);
-            BottomPipe.SetBounds(x, gapTop + GapSize, PipeWidth,
-                                 formHeight - gapTop - GapSize);
+            X = x;
+            GapTop = random.Next(80, areaHeight - 80 - GapSize);
             Passed = false;
         }
 
         public void Move(int speed)
         {
-            TopPipe.Left -= speed;
-            BottomPipe.Left -= speed;
+            X -= speed;
         }
 
         public bool CollidesWith(Rectangle area)
         {
-            return TopPipe.Bounds.IntersectsWith(area) ||
-                   BottomPipe.Bounds.IntersectsWith(area);
+            return TopRect.IntersectsWith(area) || BottomRect.IntersectsWith(area);
+        }
+
+        public void Draw(Graphics g)
+        {
+            DrawPart(g, TopRect, capAtBottom: true);
+            DrawPart(g, BottomRect, capAtBottom: false);
+        }
+
+        private static void DrawPart(Graphics g, Rectangle body, bool capAtBottom)
+        {
+            if (body.Height <= 0) return;
+
+            Color dark = Color.FromArgb(40, 110, 30);
+            Color light = Color.FromArgb(120, 200, 80);
+
+            using var edge = new Pen(Color.FromArgb(30, 70, 20), 2);
+
+            // Gövde (soldan sağa renk geçişi, 3D hissi verir)
+            using (var brush = new LinearGradientBrush(body, dark, light, LinearGradientMode.Horizontal))
+                g.FillRectangle(brush, body);
+            g.DrawRectangle(edge, body);
+
+            // Ağız kısmı (boşluğa bakan uç)
+            int capY = capAtBottom ? body.Bottom - CapHeight : body.Top;
+            var cap = new Rectangle(body.X - CapOverhang, capY, body.Width + CapOverhang * 2, CapHeight);
+            using (var brush = new LinearGradientBrush(cap, dark, light, LinearGradientMode.Horizontal))
+                g.FillRectangle(brush, cap);
+            g.DrawRectangle(edge, cap);
         }
     }
 }

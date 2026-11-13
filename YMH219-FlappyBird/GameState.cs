@@ -3,6 +3,7 @@
     public class GameState
     {
         public int Score { get; private set; }
+        public bool IsStarted { get; private set; }
         public bool IsGameOver { get; private set; }
         public int PipeSpeed { get; private set; }
 
@@ -13,19 +14,14 @@
             Reset();
         }
 
-        public void AddPoint()
-        {
-            Score++;
-        }
-
-        public void End()
-        {
-            IsGameOver = true;
-        }
+        public void Start() => IsStarted = true;
+        public void AddPoint() => Score++;
+        public void End() => IsGameOver = true;
 
         public void Reset()
         {
             Score = 0;
+            IsStarted = false;
             IsGameOver = false;
             PipeSpeed = StartSpeed;
         }
