@@ -22,7 +22,15 @@
         }
 
         public void Start() => IsStarted = true;
-        public void AddPoint() => Score++;
+        public void AddPoint()
+        {
+            Score++;
+
+            // Her 5 puanda bir hız 1 artar (en fazla 8)
+            if (Score % 5 == 0 && PipeSpeed < 8)
+                PipeSpeed++;
+        }
+
 
         public void End()
         {
