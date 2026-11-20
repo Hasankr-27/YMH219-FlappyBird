@@ -1,3 +1,4 @@
+<img width="394" height="635" alt="baslangic" src="https://github.com/user-attachments/assets/51c1de3e-540b-450c-b657-3e953bd2228c" />
 \# Flappy Bird – C# Windows Forms
 
 
@@ -18,7 +19,10 @@ YMH 219 Nesne Tabanlı Programlama dersi ek uygulama ödevi kapsamında gelişti
 
 |---|---|---|
 
-| !\[Başlangıç](screenshots/baslangic.png) | !\[Oyun](screenshots/oyun.png) | !\[Game Over](screenshots/gameover.png) |
+| !\[Başlangıç]<img width="394" height="635" alt="baslangic" src="https://github.com/user-attachments/assets/20d03f58-22a2-42df-a71a-75660aaa0625" />
+ | !\[Oyun]<img width="495" height="768" alt="oyun" src="https://github.com/user-attachments/assets/caea2bca-174d-488f-8a24-614fcac71b5f" />
+ | !\[Game Over]<img width="400" height="631" alt="gameover" src="https://github.com/user-attachments/assets/cb69d513-52ff-4435-9c51-f895d1a3818d" />
+ |
 
 
 
